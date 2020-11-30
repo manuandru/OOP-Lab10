@@ -111,10 +111,11 @@ public final class ConcurrentGUI extends JFrame {
                      * All the operations on the GUI must be performed by the
                      * Event-Dispatch Thread (EDT)!
                      */
-                    SwingUtilities.invokeAndWait(() -> ConcurrentGUI.this.display.setText(Integer.toString(Agent.this.counter)));
+                    SwingUtilities.invokeAndWait(() -> ConcurrentGUI.this.display.setText(Integer.toString(counter)));
 
+                    // dovrebbe essere atomica e non segnare il bug
                     if (increment) {
-                        this.counter++;
+                        this.counter++; 
                     } else {
                         this.counter--;
                     }
