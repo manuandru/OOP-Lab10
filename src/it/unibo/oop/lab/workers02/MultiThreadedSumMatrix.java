@@ -1,5 +1,6 @@
 package it.unibo.oop.lab.workers02;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,7 +30,8 @@ public class MultiThreadedSumMatrix implements SumMatrix {
          */
         Worker(final double[][] matrix, final int startpos, final int nelem) {
             super();
-            this.matrix = matrix;
+            //difensive copy
+            this.matrix = Arrays.copyOf(matrix, matrix.length);
             this.startpos = startpos;
             this.nelem = nelem;
         }
@@ -37,9 +39,11 @@ public class MultiThreadedSumMatrix implements SumMatrix {
         @Override
         public void run() {
             System.out.println("Working from position " + startpos + " to position " + (startpos + nelem - 1));
-            /*for (int i = startpos; i < list.size() && i < startpos + nelem; i++) {
-                this.res += this.list.get(i);
-            }*/
+            for (int i = startpos; i < matrix.length && i < startpos + nelem; i++) {
+                for (final double d : matrix[i]) {
+                    this.res += d;
+                }
+            }
         }
 
         /**
@@ -54,9 +58,29 @@ public class MultiThreadedSumMatrix implements SumMatrix {
     }
 
     public double sum(final double[][] matrix) {
+        final int size = matrix.length / this.nthread + matrix.length % this.nthread;
 
-        System.out.println(matrix[0].length);
-        return 0;
+        final List<Worker> workers = new ArrayList<>(nthread);
+        for (int start = 0; start < matrix.length; start += size) {
+            //System.out.println("start: " + start + " lenght: " + size + " end: " + (size + start));
+            workers.add(new Worker(matrix, start, size));
+        }
+
+        for (final Worker w: workers) {
+            w.start();
+        }
+
+        double sum = 0;
+        for (final Worker w: workers) {
+            try {
+                w.join();
+                sum += w.getResult();
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+        return sum;
     }
 
 }
