@@ -9,6 +9,7 @@ public class MultiThreadedSumMatrix implements SumMatrix {
     private final int nthread;
 
     public MultiThreadedSumMatrix(final int nthread) {
+        // Control nthread if >= 0
         this.nthread = nthread;
     }
 

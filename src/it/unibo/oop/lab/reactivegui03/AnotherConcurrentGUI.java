@@ -104,7 +104,7 @@ public final class AnotherConcurrentGUI extends JFrame {
          * 
          */
         private volatile boolean stop;
-        private volatile int counter;
+        private int counter;
         private volatile boolean increment = true;
 
         @Override
